@@ -1,22 +1,56 @@
-# 🎮 Tagcord.gg
+# Tagcord.gg
 
-A modern, clean Discord tag explorer built with Next.js and Tailwind CSS. Discover and share amazing Discord communities with our beautiful, responsive interface.
+A modern Discord community discovery platform built with Next.js and Supabase. Tagcord.gg provides a clean, intuitive interface for discovering and sharing Discord communities through visual tags and detailed descriptions.
 
-## ✨ Features
+## Features
 
-- 🔐 **Discord OAuth** - Secure authentication with Discord
-- 🎨 **Discord Theme** - Beautiful dark theme matching Discord's design
-- 📝 **Tag Submission** - Easy form to submit Discord tags
-- 🔍 **Tag Discovery** - Search and browse community tags
-- 📱 **Mobile Friendly** - Fully responsive design
-- ⚡ **Fast & Modern** - Built with Next.js 15 and Tailwind CSS 4
-- 🔒 **Secure** - Row Level Security with Supabase
+- **Discord OAuth Authentication** - Secure user authentication through Discord
+- **Community Tag Submission** - Streamlined form for submitting Discord server information
+- **Tag Discovery** - Browse and search Discord communities with visual tags
+- **Responsive Design** - Mobile-friendly interface optimized for all devices
+- **Modern UI** - Clean design with Discord-inspired theming
+- **Database Integration** - Powered by Supabase with Row Level Security
+- **Fast Performance** - Built with Next.js 15 and optimized for speed
 
-## 🚀 Quick Start
+## Technology Stack
+
+- **Frontend Framework**: Next.js 15 with App Router
+- **Styling**: Tailwind CSS 4
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth with Discord OAuth
+- **Language**: TypeScript
+- **Deployment**: Vercel-ready
+
+## Project Structure
+
+```
+tagcord.gg/
+├── src/
+│   ├── app/                    # Next.js app router pages
+│   │   ├── auth/              # Authentication pages
+│   │   ├── submit/            # Tag submission page
+│   │   ├── tags/              # Tag browsing page
+│   │   └── page.tsx           # Homepage
+│   ├── components/            # React components
+│   │   ├── auth/              # Authentication components
+│   │   ├── forms/             # Form components
+│   │   ├── layout/            # Layout components
+│   │   └── tags/              # Tag display components
+│   ├── lib/                   # Utility functions and configs
+│   │   ├── supabase.ts        # Client-side Supabase client
+│   │   └── supabase-server.ts # Server-side Supabase client
+│   └── types/                 # TypeScript type definitions
+├── database-setup.sql         # Database schema and RLS policies
+├── CODE_OF_CONDUCT.md        # Community guidelines
+├── SETUP.md                  # Detailed setup instructions
+└── public/                   # Static assets
+```
+
+## Quick Start
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/developedbyalex/Tagcord.git
    cd tagcord.gg
    ```
 
@@ -25,56 +59,67 @@ A modern, clean Discord tag explorer built with Next.js and Tailwind CSS. Discov
    npm install
    ```
 
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your Supabase credentials
+3. **Environment setup**
+   Create a `.env.local` file with your Supabase and Discord credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
-4. **Run the development server**
+4. **Database setup**
+   Run the SQL commands in `database-setup.sql` in your Supabase dashboard
+
+5. **Start development server**
    ```bash
    npm run dev
    ```
 
-5. **Open [http://localhost:3000](http://localhost:3000)**
+6. **Access the application**
+   Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## 📖 Full Setup Instructions
+## Detailed Setup
 
-For detailed setup instructions including Supabase and Discord configuration, see [SETUP.md](./SETUP.md).
+For comprehensive setup instructions including Supabase project creation, Discord OAuth configuration, and deployment guidelines, refer to [SETUP.md](./SETUP.md).
 
-## 🛠️ Tech Stack
+## Database Schema
 
-- **Framework**: Next.js 15 (App Router)
-- **Styling**: Tailwind CSS 4
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth with Discord OAuth
-- **Deployment**: Ready for Vercel, Netlify, etc.
+The application uses a single `tags` table with the following structure:
+- Tag metadata (name, description, category)
+- Discord server information (invite links, member counts)
+- User associations and timestamps
+- Image URLs for server logos
 
-## 📁 Project Structure
+Row Level Security (RLS) policies ensure users can only modify their own submissions while allowing public read access.
 
-```
-tagcord.gg/
-├── src/
-│   ├── app/                 # Next.js app router pages
-│   ├── components/          # React components
-│   ├── lib/                 # Utility functions and configs
-│   └── types/               # TypeScript type definitions
-├── database-setup.sql       # Database schema and setup
-└── public/                  # Static assets
-```
+## Contributing
 
-## 🤝 Contributing
+Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Make your changes with appropriate tests
+4. Commit with descriptive messages (`git commit -m 'Add new feature'`)
+5. Push to your fork (`git push origin feature/new-feature`)
+6. Submit a Pull Request
 
-## 📄 License
+Please read [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) before contributing.
 
-This project is open source and available under the [MIT License](LICENSE).
+## Development Guidelines
+
+- Follow TypeScript best practices
+- Use Tailwind CSS for styling
+- Implement proper error handling
+- Ensure mobile responsiveness
+- Test authentication flows thoroughly
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Support
+
+For issues, feature requests, or questions, please open an issue on GitHub or contact the maintainers.
 
 ---
 
-**Made with 💜 for the Discord community**
+Built for the Discord community by developers who understand the importance of finding the right servers.
