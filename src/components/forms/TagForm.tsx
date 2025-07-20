@@ -4,31 +4,21 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
 import { Profile } from '@/types/database'
-import ImageSelector from './ImageSelector'
+import DiscordIconSelector from './DiscordIconSelector'
 import toast from 'react-hot-toast'
 
 interface TagFormProps {
   user: User
   profile: Profile
-  onSuccess?: () => void
 }
 
-const PRESET_IMAGES = [
-  'https://placeholder.pics/svg/400x200/5865F2-FFFFFF/Gaming',
-  'https://placeholder.pics/svg/400x200/43B581-FFFFFF/Community',
-  'https://placeholder.pics/svg/400x200/FAA61A-FFFFFF/Tech',
-  'https://placeholder.pics/svg/400x200/F04747-FFFFFF/Art',
-  'https://placeholder.pics/svg/400x200/9B59B6-FFFFFF/Music',
-  'https://placeholder.pics/svg/400x200/E91E63-FFFFFF/Anime',
-  'https://placeholder.pics/svg/400x200/FF9800-FFFFFF/Sports',
-  'https://placeholder.pics/svg/400x200/607D8B-FFFFFF/Study'
-]
 
-export default function TagForm({ user, profile, onSuccess }: TagFormProps) {
+
+export default function TagForm({ user, profile }: TagFormProps) {
   const [formData, setFormData] = useState({
     discordTag: '',
-    description: '',
-    imageUrl: PRESET_IMAGES[0]
+    discordIconId: 2, // Default to first available icon
+    discordLink: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -36,13 +26,15 @@ export default function TagForm({ user, profile, onSuccess }: TagFormProps) {
   const supabase = createClient()
 
   const validateDiscordTag = (tag: string): boolean => {
-    // Updated Discord tag format validation
-    // Modern format: @username or username (no discriminator)
-    // Legacy format: username#1234
-    const modernFormat = /^@?[a-zA-Z0-9._]{2,32}$/
-    const legacyFormat = /^[a-zA-Z0-9._]{2,32}#[0-9]{4}$/
-    
-    return modernFormat.test(tag) || legacyFormat.test(tag)
+    // Discord tag validation: 1-4 characters, alphanumeric only
+    const discordTagFormat = /^[a-zA-Z0-9]{1,4}$/
+    return discordTagFormat.test(tag)
+  }
+
+  const validateDiscordLink = (link: string): boolean => {
+    // Discord invite link validation - supports both discord.gg and discord.com
+    const discordLinkPattern = /^https:\/\/(discord\.gg|discord\.com\/invite)\/[a-zA-Z0-9-]+$/
+    return discordLinkPattern.test(link)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,11 +46,13 @@ export default function TagForm({ user, profile, onSuccess }: TagFormProps) {
     if (!formData.discordTag.trim()) {
       newErrors.discordTag = 'Discord tag is required'
     } else if (!validateDiscordTag(formData.discordTag.trim())) {
-      newErrors.discordTag = 'Invalid Discord tag format. Use: username or username#1234'
+      newErrors.discordTag = 'Discord tag must be 1-4 characters (letters and numbers only)'
     }
-    
-    if (!formData.imageUrl) {
-      newErrors.imageUrl = 'Please select an image'
+
+    if (!formData.discordLink.trim()) {
+      newErrors.discordLink = 'Discord link is required'
+    } else if (!validateDiscordLink(formData.discordLink.trim())) {
+      newErrors.discordLink = 'Please enter a valid Discord invite link (https://discord.gg/...)'
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -70,19 +64,35 @@ export default function TagForm({ user, profile, onSuccess }: TagFormProps) {
     setErrors({})
 
     try {
+      // Check if tag already exists
+      const { data: existingTag } = await supabase
+        .from('tags')
+        .select('id')
+        .eq('discord_tag', formData.discordTag.trim().toUpperCase())
+        .single()
+
+      if (existingTag) {
+        setErrors({ discordTag: 'This tag already exists. Please choose a different tag.' })
+        setIsSubmitting(false)
+        return
+      }
+
       const { error } = await supabase
         .from('tags')
         .insert({
-          discord_tag: formData.discordTag.trim(),
-          description: formData.description.trim() || null,
-          image_url: formData.imageUrl,
+          discord_tag: formData.discordTag.trim().toUpperCase(),
+          discord_icon_id: formData.discordIconId,
+          discord_url: formData.discordLink.trim(),
+          description: null,
+          image_url: 'https://placeholder.pics/svg/400x200/5865F2-FFFFFF/Tagcord',
           user_id: user.id,
           user_avatar: profile.discord_avatar,
           user_username: profile.discord_username
         })
 
       if (error) {
-        throw error
+        console.error('Supabase error:', error)
+        throw new Error(error.message || 'Database error occurred')
       }
 
       toast.success('Tag submitted successfully! 🎉')
@@ -90,14 +100,18 @@ export default function TagForm({ user, profile, onSuccess }: TagFormProps) {
       // Reset form
       setFormData({
         discordTag: '',
-        description: '',
-        imageUrl: PRESET_IMAGES[0]
+        discordIconId: 2,
+        discordLink: ''
       })
       
-      onSuccess?.()
+      // Redirect to tags page after successful submission
+      setTimeout(() => {
+        window.location.href = '/tags'
+      }, 1000)
     } catch (error) {
       console.error('Error submitting tag:', error)
-      toast.error('Failed to submit tag. Please try again.')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit tag. Please try again.'
+      toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
@@ -105,84 +119,74 @@ export default function TagForm({ user, profile, onSuccess }: TagFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Discord Icon Selector */}
+      <DiscordIconSelector
+        selectedIconId={formData.discordIconId}
+        onIconSelect={(iconId) => setFormData(prev => ({ ...prev, discordIconId: iconId }))}
+      />
+
       {/* Discord Tag Input */}
       <div>
         <label htmlFor="discordTag" className="block text-sm font-medium text-[var(--foreground)] mb-2">
-          Discord Tag *
+          Tag Name *
         </label>
         <input
           type="text"
           id="discordTag"
           value={formData.discordTag}
-          onChange={(e) => setFormData(prev => ({ ...prev, discordTag: e.target.value }))}
-          placeholder="e.g., @username or username#1234"
+          onChange={(e) => {
+            // Only allow alphanumeric characters and limit to 4 characters
+            const value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4)
+            setFormData(prev => ({ ...prev, discordTag: value }))
+          }}
+          placeholder="ABC1"
           className={`input ${errors.discordTag ? 'border-[var(--error)]' : ''}`}
           disabled={isSubmitting}
+          maxLength={4}
         />
         {errors.discordTag && (
           <p className="mt-1 text-sm text-[var(--error)]">{errors.discordTag}</p>
         )}
         <p className="mt-1 text-xs text-[var(--text-secondary)]">
-          Enter your Discord username or legacy tag format
+          1-4 characters: letters and numbers only
         </p>
       </div>
 
-      {/* Description Input */}
+      {/* Discord Link Input */}
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-[var(--foreground)] mb-2">
-          Description
+        <label htmlFor="discordLink" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+          Discord Link *
         </label>
-        <textarea
-          id="description"
-          value={formData.description}
-          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-          placeholder="Tell us about your Discord server or community..."
-          rows={3}
-          className="input resize-none"
+        <input
+          type="url"
+          id="discordLink"
+          value={formData.discordLink}
+          onChange={(e) => setFormData(prev => ({ ...prev, discordLink: e.target.value }))}
+          placeholder="https://discord.gg/your-invite"
+          className={`input ${errors.discordLink ? 'border-[var(--error)]' : ''}`}
           disabled={isSubmitting}
         />
+        {errors.discordLink && (
+          <p className="mt-1 text-sm text-[var(--error)]">{errors.discordLink}</p>
+        )}
         <p className="mt-1 text-xs text-[var(--text-secondary)]">
-          Optional: Describe your server or community
+          Your Discord server invite link (discord.gg or discord.com/invite)
         </p>
       </div>
 
-      {/* Image Selector */}
-      <ImageSelector
-        selectedImage={formData.imageUrl}
-        onImageSelect={(imageUrl) => setFormData(prev => ({ ...prev, imageUrl }))}
-      />
-      {errors.imageUrl && (
-        <p className="mt-1 text-sm text-[var(--error)]">{errors.imageUrl}</p>
-      )}
-
-      {/* Preview */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-        <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Preview</h3>
-        <div className="flex items-start gap-3">
-          <img
-            src={formData.imageUrl}
-            alt="Preview"
-            className="w-16 h-12 rounded-md object-cover"
-          />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-[var(--foreground)]">
-              {formData.discordTag || 'Your Discord Tag'}
-            </p>
-            <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
-              {formData.description || 'Your description will appear here...'}
-            </p>
-            <div className="flex items-center gap-2 mt-2 text-xs text-[var(--text-secondary)]">
-              <img
-                src={
-                  profile.discord_avatar
-                    ? `https://cdn.discordapp.com/avatars/${profile.discord_id}/${profile.discord_avatar}.png`
-                    : `https://cdn.discordapp.com/embed/avatars/${(parseInt(profile.discord_id, 10) % 5)}.png`
-                }
-                alt={profile.discord_username}
-                className="w-4 h-4 rounded-full"
-              />
-              <span>{profile.discord_username}</span>
-            </div>
+            {/* Tag Preview */}
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+        <h3 className="text-sm font-medium text-[var(--foreground)] mb-4">Preview</h3>
+        <div className="bg-[#2b2d31] rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <img
+              src={`https://discordresources.com/img/guilds/${formData.discordIconId}.svg`}
+              alt={`Discord Icon ${formData.discordIconId}`}
+              className="w-10 h-10 rounded-full"
+            />
+            <span className="font-semibold text-lg text-white">
+              {formData.discordTag.toUpperCase() || 'ABCD'}
+            </span>
           </div>
         </div>
       </div>

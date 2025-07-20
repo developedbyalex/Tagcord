@@ -20,7 +20,8 @@ export default async function SubmitTagPage() {
   if (!profile) {
     return (
       <main className="min-h-screen bg-[var(--background)] py-8">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto">
           <div className="text-center py-12">
             <div className="w-24 h-24 mx-auto mb-4 bg-[var(--secondary)] rounded-full flex items-center justify-center">
               <svg
@@ -50,6 +51,7 @@ export default async function SubmitTagPage() {
               Go back home
             </Link>
           </div>
+          </div>
         </div>
       </main>
     )
@@ -57,7 +59,8 @@ export default async function SubmitTagPage() {
 
   return (
     <main className="min-h-screen bg-[var(--background)] py-8">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <Link
@@ -83,10 +86,6 @@ export default async function SubmitTagPage() {
           <TagForm
             user={user}
             profile={profile}
-            onSuccess={() => {
-              // Redirect to all tags page after successful submission
-              window.location.href = '/tags'
-            }}
           />
         </div>
 
@@ -98,25 +97,26 @@ export default async function SubmitTagPage() {
           <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
             <li className="flex items-start gap-2">
               <span className="text-[var(--success)] mt-0.5">✓</span>
-              Use your real Discord username or tag
+              Tag must be 1-4 characters (letters and numbers only)
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[var(--success)] mt-0.5">✓</span>
-              Write a clear description of your community
+              Discord link must be set to never expire
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[var(--success)] mt-0.5">✓</span>
-              Choose an appropriate image that represents your server
+              Choose an appropriate Discord icon for your server
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[var(--error)] mt-0.5">✗</span>
-              No spam, explicit content, or misleading information
+              No servers without a tag will be accepted
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[var(--error)] mt-0.5">✗</span>
-              Don't submit multiple tags for the same community
+              Don&apos;t submit multiple tags for the same community
             </li>
           </ul>
+        </div>
         </div>
       </div>
     </main>

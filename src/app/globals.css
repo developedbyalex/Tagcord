@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  /* Discord Dark Theme Colors */
-  --background: #2C2F33;
+  /* Authentic Discord Color Palette */
+  --background: #1e2124;
   --foreground: #FFFFFF;
-  --secondary: #23272A;
-  --accent: #5865F2;
+  --secondary: #282b30;
+  --accent: #7289da;
   --text-secondary: #B9BBBE;
-  --border: #4F545C;
-  --hover: #36393F;
+  --border: #424549;
+  --hover: #36393e;
   --success: #43B581;
   --error: #F04747;
   --warning: #FAA61A;
@@ -95,53 +95,63 @@ select:focus-visible {
 
 /* Discord-style button */
 .btn-discord {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, #677bc4 100%);
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 500;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
   font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(114, 137, 218, 0.2);
 }
 
 .btn-discord:hover {
-  background: #4752C4;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #677bc4 0%, #5b6fb8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(114, 137, 218, 0.3);
 }
 
 .btn-discord:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(114, 137, 218, 0.2);
 }
 
 /* Card styles */
 .card {
   background: var(--secondary);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
 .card:hover {
   border-color: var(--accent);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(114, 137, 218, 0.1);
+  transform: translateY(-2px);
 }
 
 /* Input styles */
 .input {
   background: var(--secondary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
   color: var(--foreground);
   font-size: 14px;
   width: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .input:focus {
   border-color: var(--accent);
   background: var(--background);
+  box-shadow: 0 4px 12px rgba(114, 137, 218, 0.15), 0 0 0 3px rgba(114, 137, 218, 0.1);
+  outline: none;
 }
 
 .input::placeholder {

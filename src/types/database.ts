@@ -6,6 +6,8 @@ export interface Database {
           id: string
           created_at: string
           discord_tag: string
+          discord_icon_id: number
+          discord_url: string | null
           description: string | null
           image_url: string
           user_id: string
@@ -16,6 +18,8 @@ export interface Database {
           id?: string
           created_at?: string
           discord_tag: string
+          discord_icon_id: number
+          discord_url?: string | null
           description?: string | null
           image_url: string
           user_id: string
@@ -26,6 +30,8 @@ export interface Database {
           id?: string
           created_at?: string
           discord_tag?: string
+          discord_icon_id?: number
+          discord_url?: string | null
           description?: string | null
           image_url?: string
           user_id?: string
