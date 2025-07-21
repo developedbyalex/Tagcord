@@ -25,7 +25,8 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 1. **Create a new Supabase project** at [supabase.com](https://supabase.com)
 2. **Run the database setup** by executing the SQL in `database-setup.sql` in your Supabase Dashboard SQL Editor
-3. **Configure Discord OAuth**:
+3. **Run the database migration** by executing the SQL in `database-migration.sql` to add category support
+4. **Configure Discord OAuth**:
    - Go to Authentication > Providers in your Supabase dashboard
    - Enable Discord provider
    - Add your Discord app credentials
@@ -54,8 +55,9 @@ Visit `http://localhost:3000` to see your application!
 
 - ✅ **Discord OAuth Authentication** - Sign in with Discord
 - ✅ **Modern Discord Theme** - Dark theme with Discord colors
-- ✅ **Tag Submission System** - Submit Discord tags with images
-- ✅ **Tag Discovery** - Browse and search through tags
+- ✅ **Tag Submission System** - Submit Discord tags with images and categories
+- ✅ **Tag Discovery** - Browse and search through tags with category filtering
+- ✅ **Category System** - Add up to 3 categories per Discord tag
 - ✅ **Responsive Design** - Mobile-friendly layout
 - ✅ **Real-time Updates** - Powered by Supabase
 - ✅ **Image Selector** - Predefined Discord-themed images

@@ -13,6 +13,7 @@ export interface Database {
           user_id: string
           user_avatar: string | null
           user_username: string
+          categories: string[] | null
         }
         Insert: {
           id?: string
@@ -25,6 +26,7 @@ export interface Database {
           user_id: string
           user_avatar?: string | null
           user_username: string
+          categories?: string[] | null
         }
         Update: {
           id?: string
@@ -37,6 +39,7 @@ export interface Database {
           user_id?: string
           user_avatar?: string | null
           user_username?: string
+          categories?: string[] | null
         }
       }
       profiles: {

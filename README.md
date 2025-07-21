@@ -5,8 +5,10 @@ A modern Discord community discovery platform built with Next.js and Supabase. T
 ## Features
 
 - **Discord OAuth Authentication** - Secure user authentication through Discord
-- **Community Tag Submission** - Streamlined form for submitting Discord server information
-- **Tag Discovery** - Browse and search Discord communities with visual tags
+- **Community Tag Submission** - Streamlined form for submitting Discord server information with category tags
+- **Tag Discovery** - Browse and search Discord communities with visual tags and category filtering
+- **Category System** - Add up to 3 categories per Discord tag (Gaming, Coding, Design, etc.)
+- **Advanced Filtering** - Filter tags by categories and search across multiple fields
 - **User Account Management** - Settings page with profile information and account deletion
 - **Admin Panel** - Server management and moderation tools for administrators
 - **Responsive Design** - Mobile-friendly interface optimized for all devices
@@ -91,12 +93,20 @@ For comprehensive setup instructions including Supabase project creation, Discor
 ## Database Schema
 
 The application uses a single `tags` table with the following structure:
-- Tag metadata (name, description, category)
+- Tag metadata (name, description, categories)
 - Discord server information (invite links, member counts)
 - User associations and timestamps
 - Image URLs for server logos
+- Category tags (array of up to 3 categories per tag)
 
 Row Level Security (RLS) policies ensure users can only modify their own submissions while allowing public read access.
+
+### Categories
+
+Tags can be categorized with up to 3 categories from the following options:
+- Gaming, Coding, Design, Small Community, Music, Art, Education, Technology
+- Social, Business, Entertainment, Sports, Health, Travel, Food, Fashion
+- Science, Politics, Religion, Other
 
 ## Contributing
 

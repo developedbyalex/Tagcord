@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
 import { Profile } from '@/types/database'
 import DiscordIconSelector from './DiscordIconSelector'
+import CategorySelector, { Category } from './CategorySelector'
 import toast from 'react-hot-toast'
 
 interface TagFormProps {
@@ -20,6 +21,7 @@ export default function TagForm({ user, profile }: TagFormProps) {
     discordIconId: 2, // Default to first available icon
     discordLink: ''
   })
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -55,6 +57,10 @@ export default function TagForm({ user, profile }: TagFormProps) {
       newErrors.discordLink = 'Please enter a valid Discord invite link (https://discord.gg/...)'
     }
 
+    if (selectedCategories.length === 0) {
+      newErrors.categories = 'Please select at least one category'
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       return
@@ -87,7 +93,8 @@ export default function TagForm({ user, profile }: TagFormProps) {
           image_url: 'https://placeholder.pics/svg/400x200/5865F2-FFFFFF/Tagcord',
           user_id: user.id,
           user_avatar: profile.discord_avatar,
-          user_username: profile.discord_username
+          user_username: profile.discord_username,
+          categories: selectedCategories
         })
 
       if (error) {
@@ -103,6 +110,7 @@ export default function TagForm({ user, profile }: TagFormProps) {
         discordIconId: 2,
         discordLink: ''
       })
+      setSelectedCategories([])
       
       // Redirect to tags page after successful submission
       setTimeout(() => {
@@ -174,6 +182,16 @@ export default function TagForm({ user, profile }: TagFormProps) {
         </p>
       </div>
 
+      {/* Category Selector */}
+      <CategorySelector
+        selectedCategories={selectedCategories}
+        onCategoriesChange={setSelectedCategories}
+        disabled={isSubmitting}
+      />
+      {errors.categories && (
+        <p className="mt-1 text-sm text-[var(--error)]">{errors.categories}</p>
+      )}
+
             {/* Tag Preview */}
       <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
         <h3 className="text-sm font-medium text-[var(--foreground)] mb-4">Preview</h3>
@@ -184,9 +202,23 @@ export default function TagForm({ user, profile }: TagFormProps) {
               alt={`Discord Icon ${formData.discordIconId}`}
               className="w-10 h-10 rounded-full"
             />
-            <span className="font-semibold text-lg text-white">
-              {formData.discordTag.toUpperCase() || 'ABCD'}
-            </span>
+            <div className="flex-grow min-w-0">
+              <span className="font-semibold text-lg text-white">
+                {formData.discordTag.toUpperCase() || 'ABCD'}
+              </span>
+              {selectedCategories.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {selectedCategories.map((category) => (
+                    <span
+                      key={category}
+                      className="inline-block px-2 py-1 bg-[var(--accent)]/20 text-[var(--accent)] rounded-md text-xs font-medium"
+                    >
+                      {category}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

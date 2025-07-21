@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 import { Tag } from '@/types/database'
 import TagsGrid from '@/components/tags/TagsGrid'
+import { AVAILABLE_CATEGORIES, Category } from '@/components/forms/CategorySelector'
 
 const TAGS_PER_PAGE = 12
 
@@ -14,8 +15,18 @@ export default function AllTagsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
   const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest')
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   const supabase = createClient()
+
+  useEffect(() => {
+    // Fetch current user ID on mount
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUserId(user?.id || null)
+    })()
+  }, [supabase])
 
   const fetchTags = useCallback(async () => {
     setLoading(true)
@@ -27,6 +38,11 @@ export default function AllTagsPage() {
     // Apply search filter
     if (searchQuery.trim()) {
       query = query.or(`discord_tag.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,user_username.ilike.%${searchQuery}%`)
+    }
+
+    // Apply category filter
+    if (selectedCategories.length > 0) {
+      query = query.overlaps('categories', selectedCategories)
     }
 
     // Apply sorting
@@ -47,7 +63,7 @@ export default function AllTagsPage() {
     }
     
     setLoading(false)
-  }, [searchQuery, currentPage, sortBy, supabase])
+  }, [searchQuery, selectedCategories, currentPage, sortBy, supabase])
 
   useEffect(() => {
     fetchTags()
@@ -59,6 +75,11 @@ export default function AllTagsPage() {
     e.preventDefault()
     setCurrentPage(1) // Reset to first page when searching
     fetchTags()
+  }
+
+  const handleCategoryChange = (categories: Category[]) => {
+    setSelectedCategories(categories)
+    setCurrentPage(1) // Reset to first page when filtering
   }
 
   return (
@@ -76,37 +97,81 @@ export default function AllTagsPage() {
           </div>
 
           {/* Search and Filters */}
-          <div className="mb-8 flex flex-col sm:flex-row gap-4">
-            {/* Search Bar */}
-            <form onSubmit={handleSearch} className="flex-1">
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search tags, descriptions, or users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="input pl-10 pr-4"
-                />
-              </div>
-            </form>
+          <div className="mb-8 space-y-4">
+            {/* Search and Sort Row */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Search Bar */}
+              <form onSubmit={handleSearch} className="flex-1">
+                <div className="relative">
+                  <svg
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search tags, descriptions, or users..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="input pl-10 pr-4"
+                  />
+                </div>
+              </form>
 
-            {/* Sort Dropdown */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest')}
-              className="input w-auto min-w-[120px]"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
+              {/* Sort Dropdown */}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest')}
+                className="input w-auto min-w-[120px]"
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+              </select>
+            </div>
+
+            {/* Category Filter */}
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Filter by Categories
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {AVAILABLE_CATEGORIES.map((category) => {
+                  const isSelected = selectedCategories.includes(category)
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => {
+                        if (isSelected) {
+                          handleCategoryChange(selectedCategories.filter(c => c !== category))
+                        } else {
+                          handleCategoryChange([...selectedCategories, category])
+                        }
+                      }}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                        isSelected
+                          ? 'bg-[var(--accent)] text-white'
+                          : 'bg-[var(--secondary)] text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--foreground)]'
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  )
+                })}
+                {selectedCategories.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleCategoryChange([])}
+                    className="px-3 py-1 rounded-full text-sm font-medium bg-[var(--error)]/20 text-[var(--error)] hover:bg-[var(--error)]/30 transition-colors"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Results Count */}
@@ -119,7 +184,7 @@ export default function AllTagsPage() {
           </div>
 
           {/* Tags Grid */}
-          <TagsGrid tags={tags} isLoading={loading} />
+          <TagsGrid tags={tags} isLoading={loading} currentUserId={currentUserId} />
 
           {/* Pagination */}
           {totalPages > 1 && !loading && (
@@ -199,18 +264,36 @@ export default function AllTagsPage() {
                 No tags found
               </h3>
               <p className="text-[var(--text-secondary)] mb-4">
-                {searchQuery ? 'Try adjusting your search terms' : 'Be the first to submit a tag!'}
+                {searchQuery || selectedCategories.length > 0 
+                  ? 'Try adjusting your search terms or filters' 
+                  : 'Be the first to submit a tag!'
+                }
               </p>
-              {searchQuery && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('')
-                    setCurrentPage(1)
-                  }}
-                  className="text-[var(--accent)] hover:text-[var(--foreground)] font-medium transition-colors"
-                >
-                  Clear search
-                </button>
+              {(searchQuery || selectedCategories.length > 0) && (
+                <div className="flex gap-2 justify-center">
+                  {searchQuery && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('')
+                        setCurrentPage(1)
+                      }}
+                      className="text-[var(--accent)] hover:text-[var(--foreground)] font-medium transition-colors"
+                    >
+                      Clear search
+                    </button>
+                  )}
+                  {selectedCategories.length > 0 && (
+                    <button
+                      onClick={() => {
+                        setSelectedCategories([])
+                        setCurrentPage(1)
+                      }}
+                      className="text-[var(--accent)] hover:text-[var(--foreground)] font-medium transition-colors"
+                    >
+                      Clear filters
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           )}

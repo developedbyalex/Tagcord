@@ -4,9 +4,10 @@ import { Tag } from '@/types/database'
 
 interface TagCardProps {
   tag: Tag
+  currentUserId?: string | null
 }
 
-export default function TagCard({ tag }: TagCardProps) {
+export default function TagCard({ tag, currentUserId }: TagCardProps) {
   const handleClick = () => {
     if (tag.discord_url) {
       // Open Discord invite link in a new tab
@@ -46,6 +47,18 @@ export default function TagCard({ tag }: TagCardProps) {
             <p className="text-sm text-[var(--text-secondary)] mt-1">
               Click to join Discord server
             </p>
+          )}
+          {tag.categories && tag.categories.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {tag.categories.slice(0, 3).map((category) => (
+                <span
+                  key={category}
+                  className="inline-block px-2 py-1 bg-[var(--accent)]/20 text-[var(--accent)] rounded-md text-xs font-medium"
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
           )}
         </div>
         {tag.discord_url && (
