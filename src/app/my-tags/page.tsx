@@ -103,19 +103,36 @@ export default function MyTagsPage() {
       return
     }
 
-    const { error } = await supabase
+    // Fetch user and profile for required fields
+    const { data: { user } } = await supabase.auth.getUser()
+    let profile = null
+    if (user) {
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+      profile = profileData
+    }
+
+    // Update the tag with all required fields
+    const { data, error } = await supabase
       .from('tags')
       .update({
         discord_tag: editForm.discordTag.trim().toUpperCase(),
         discord_icon_id: editForm.discordIconId,
         discord_url: editForm.discordLink.trim(),
-        categories: editForm.categories
+        categories: editForm.categories,
+        user_id: user?.id,
+        user_username: profile?.discord_username || '',
+        user_avatar: profile?.discord_avatar || '',
+        image_url: editingTag.image_url // keep the existing image_url
       })
       .eq('id', editingTag.id)
 
     if (error) {
       console.error('Error updating tag:', error)
-      toast.error('Failed to update tag')
+      toast.error('Failed to update tag: ' + (error.message || JSON.stringify(error)))
     } else {
       toast.success('Tag updated successfully!')
       cancelEditing()
