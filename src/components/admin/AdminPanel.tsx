@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase'
+import { useState, useEffect, useCallback } from 'react'
 import { Tag, Profile } from '@/types/database'
 import { adminDeleteTagClient, adminGetAllTagsClient, adminGetAllUsersClient } from '@/lib/admin-client'
 import toast from 'react-hot-toast'
@@ -21,10 +20,9 @@ export default function AdminPanel() {
   const [deletingServer, setDeletingServer] = useState<string | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
 
-  const supabase = createClient()
   const ITEMS_PER_PAGE = 10
 
-  const fetchServers = async () => {
+  const fetchServers = useCallback(async () => {
     setLoading(true)
     
     try {
@@ -60,9 +58,9 @@ export default function AdminPanel() {
     }
     
     setLoading(false)
-  }
+  }, [searchQuery, currentPage])
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true)
     
     try {
@@ -97,7 +95,7 @@ export default function AdminPanel() {
     }
     
     setLoading(false)
-  }
+  }, [searchQuery, currentPage])
 
   useEffect(() => {
     if (activeTab === 'servers') {
@@ -105,7 +103,7 @@ export default function AdminPanel() {
     } else {
       fetchUsers()
     }
-  }, [searchQuery, currentPage, activeTab])
+  }, [fetchServers, fetchUsers, activeTab])
 
   const handleDeleteServer = async (serverId: string) => {
     setDeletingServer(serverId)

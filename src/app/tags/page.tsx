@@ -51,7 +51,7 @@ export default function AllTagsPage() {
 
   useEffect(() => {
     fetchTags()
-  }, [searchQuery, currentPage, sortBy])
+  }, [fetchTags])
 
   const totalPages = Math.ceil(totalCount / TAGS_PER_PAGE)
 

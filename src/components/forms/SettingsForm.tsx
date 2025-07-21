@@ -137,7 +137,7 @@ export default function SettingsForm({ user, profile }: SettingsFormProps) {
             </p>
             <ul className="list-disc list-inside text-[var(--text-secondary)] mb-4 space-y-1">
               <li>Your user profile</li>
-              <li>All tags you've submitted</li>
+              <li>All tags you&apos;ve submitted</li>
               <li>All account data and preferences</li>
             </ul>
           </div>
