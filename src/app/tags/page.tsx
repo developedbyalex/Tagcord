@@ -16,17 +16,7 @@ export default function AllTagsPage() {
   const [totalCount, setTotalCount] = useState(0)
   const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest')
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-
   const supabase = createClient()
-
-  useEffect(() => {
-    // Fetch current user ID on mount
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setCurrentUserId(user?.id || null)
-    })()
-  }, [supabase])
 
   const fetchTags = useCallback(async () => {
     setLoading(true)
@@ -184,7 +174,7 @@ export default function AllTagsPage() {
           </div>
 
           {/* Tags Grid */}
-          <TagsGrid tags={tags} isLoading={loading} currentUserId={currentUserId} />
+          <TagsGrid tags={tags} isLoading={loading} />
 
           {/* Pagination */}
           {totalPages > 1 && !loading && (

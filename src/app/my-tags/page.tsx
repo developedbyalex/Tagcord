@@ -20,18 +20,6 @@ export default function MyTagsPage() {
 
   const supabase = createClient()
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        redirect('/auth/login')
-      }
-      fetchUserTags()
-    }
-    checkAuth()
-  }, [supabase])
-
   const fetchUserTags = async () => {
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
@@ -52,6 +40,18 @@ export default function MyTagsPage() {
     }
     setLoading(false)
   }
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        redirect('/auth/login')
+      }
+      fetchUserTags()
+    }
+    checkAuth()
+  }, [supabase])
 
   const startEditing = (tag: Tag) => {
     setEditingTag(tag)
@@ -116,7 +116,7 @@ export default function MyTagsPage() {
     }
 
     // Update the tag with all required fields
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('tags')
       .update({
         discord_tag: editForm.discordTag.trim().toUpperCase(),
@@ -217,7 +217,7 @@ export default function MyTagsPage() {
               No tags yet
             </h3>
             <p className="text-[var(--text-secondary)] mb-4">
-              You haven't submitted any Discord tags yet.
+              You haven&apos;t submitted any Discord tags yet.
             </p>
             <Link
               href="/submit"
@@ -342,7 +342,7 @@ export default function MyTagsPage() {
                           </div>
                         ) : (
                           <p className="text-xs text-[var(--error)] mt-1">
-                            ⚠️ No categories assigned (required)
+                            ⚠️ No categories assigned - required
                           </p>
                         )}
                       </div>

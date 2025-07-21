@@ -4,10 +4,9 @@ import TagCard from './TagCard'
 interface TagsGridProps {
   tags: Tag[]
   isLoading?: boolean
-  currentUserId?: string | null
 }
 
-export default function TagsGrid({ tags, isLoading = false, currentUserId }: TagsGridProps) {
+export default function TagsGrid({ tags, isLoading = false }: TagsGridProps) {
   // Loading skeleton
   if (isLoading) {
     return (
@@ -71,7 +70,7 @@ export default function TagsGrid({ tags, isLoading = false, currentUserId }: Tag
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
       {tags.map((tag) => (
-        <TagCard key={tag.id} tag={tag} currentUserId={currentUserId} />
+        <TagCard key={tag.id} tag={tag} />
       ))}
     </div>
   )

@@ -4,10 +4,9 @@ import { Tag } from '@/types/database'
 
 interface TagCardProps {
   tag: Tag
-  currentUserId?: string | null
 }
 
-export default function TagCard({ tag, currentUserId }: TagCardProps) {
+export default function TagCard({ tag }: TagCardProps) {
   const handleClick = () => {
     if (tag.discord_url) {
       // Open Discord invite link in a new tab
