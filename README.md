@@ -7,6 +7,8 @@ A modern Discord community discovery platform built with Next.js and Supabase. T
 - **Discord OAuth Authentication** - Secure user authentication through Discord
 - **Community Tag Submission** - Streamlined form for submitting Discord server information
 - **Tag Discovery** - Browse and search Discord communities with visual tags
+- **User Account Management** - Settings page with profile information and account deletion
+- **Admin Panel** - Server management and moderation tools for administrators
 - **Responsive Design** - Mobile-friendly interface optimized for all devices
 - **Modern UI** - Clean design with Discord-inspired theming
 - **Database Integration** - Powered by Supabase with Row Level Security
@@ -28,6 +30,11 @@ tagcord.gg/
 ├── src/
 │   ├── app/                    # Next.js app router pages
 │   │   ├── auth/              # Authentication pages
+│   │   ├── api/               # API routes
+│   │   │   ├── delete-account/ # Account deletion endpoint
+│   │   │   └── admin/         # Admin API endpoints
+│   │   ├── admin/             # Admin panel page
+│   │   ├── settings/          # User settings page
 │   │   ├── submit/            # Tag submission page
 │   │   ├── tags/              # Tag browsing page
 │   │   └── page.tsx           # Homepage

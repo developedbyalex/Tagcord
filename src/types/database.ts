@@ -47,6 +47,7 @@ export interface Database {
           discord_username: string
           discord_avatar: string | null
           discord_discriminator: string | null
+          is_admin: boolean
         }
         Insert: {
           id: string
@@ -55,6 +56,7 @@ export interface Database {
           discord_username: string
           discord_avatar?: string | null
           discord_discriminator?: string | null
+          is_admin?: boolean
         }
         Update: {
           id?: string
@@ -63,6 +65,7 @@ export interface Database {
           discord_username?: string
           discord_avatar?: string | null
           discord_discriminator?: string | null
+          is_admin?: boolean
         }
       }
     }

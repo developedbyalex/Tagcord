@@ -5,30 +5,46 @@ import Link from 'next/link'
 export default async function HomePage() {
   const supabase = await createClient()
   
-  // Get recent tags (limit to 6 for cleaner layout)
-  const { data: tags, error } = await supabase
-    .from('tags')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(6)
+  let tags = []
+  let error = null
+  
+  try {
+    // Get recent tags (limit to 6 for cleaner layout)
+    const { data, error: fetchError } = await supabase
+      .from('tags')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(6)
+    
+    tags = data || []
+    error = fetchError
+  } catch (err) {
+    console.error('Error fetching tags:', err)
+    error = err
+  }
 
-  const { data: { user } } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data: { user: userData } } = await supabase.auth.getUser()
+    user = userData
+  } catch (err) {
+    console.error('Error fetching user:', err)
+    // Continue without user data
+  }
 
   if (error) {
     console.error('Error fetching tags:', error)
+    // Continue with empty tags array instead of breaking
   }
 
   return (
     <main className="min-h-screen bg-[var(--background)]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[var(--secondary)] via-[var(--background)] to-[var(--secondary)]">
-        <div className="absolute inset-0 opacity-50" style={{
-          backgroundImage: "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.02\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"1.5\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"
-        }}></div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+      <section className="py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex justify-center mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-[var(--accent)] to-[#677bc4] rounded-3xl flex items-center justify-center shadow-2xl">
+              <div className="w-24 h-24 bg-[var(--accent)] rounded-3xl flex items-center justify-center">
                 <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                 </svg>
@@ -41,17 +57,16 @@ export default async function HomePage() {
               The ultimate platform to <span className="text-[var(--accent)] font-semibold">discover</span> and <span className="text-[var(--accent)] font-semibold">share</span> amazing Discord tags.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                              <Link
-                  href="/tags"
-                  className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-[var(--accent)] rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-[var(--accent)]/25"
-                >
-                  <span className="relative z-10">Explore Tags</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)] to-[#677bc4] transition-opacity duration-300 group-hover:opacity-100"></div>
-                </Link>
+              <Link
+                href="/tags"
+                className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-[var(--accent)] rounded-xl hover:bg-[#677bc4] transition-colors"
+              >
+                Explore Tags
+              </Link>
               {user && (
                 <Link
                   href="/submit"
-                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-transparent border-2 border-[var(--accent)] text-[var(--accent)] rounded-xl hover:bg-[var(--accent)] hover:text-white transition-all duration-300 hover:scale-105"
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-transparent border-2 border-[var(--accent)] text-[var(--accent)] rounded-xl hover:bg-[var(--accent)] hover:text-white transition-colors"
                 >
                   Share Your Server
                 </Link>
@@ -61,10 +76,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-
-
       {/* Recent Communities Section */}
-      <section className="py-20 bg-gradient-to-b from-[var(--background)] to-[var(--secondary)]">
+      <section className="py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] mb-4">
@@ -88,9 +101,9 @@ export default async function HomePage() {
             <TagsGrid tags={tags} />
           ) : (
             <div className="text-center py-16">
-              <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-[var(--accent)] to-[#677bc4] rounded-full flex items-center justify-center opacity-50">
+              <div className="w-32 h-32 mx-auto mb-6 bg-[var(--secondary)] rounded-full flex items-center justify-center">
                 <svg
-                  className="w-16 h-16 text-white"
+                  className="w-16 h-16 text-[var(--text-secondary)]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -112,7 +125,7 @@ export default async function HomePage() {
               {user ? (
                 <Link
                   href="/submit"
-                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-[var(--accent)] rounded-xl hover:scale-105 transition-all duration-300"
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-[var(--accent)] rounded-xl hover:bg-[#677bc4] transition-colors"
                 >
                   Submit the First Community
                 </Link>
@@ -123,7 +136,7 @@ export default async function HomePage() {
                   </p>
                   <Link
                     href="/auth/login"
-                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-[var(--accent)] rounded-xl hover:scale-105 transition-all duration-300"
+                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-[var(--accent)] rounded-xl hover:bg-[#677bc4] transition-colors"
                   >
                     Get Started
                   </Link>
@@ -133,8 +146,6 @@ export default async function HomePage() {
           )}
         </div>
       </section>
-
-
 
       {/* Footer */}
       <footer className="bg-[var(--background)] border-t border-[var(--border)] py-12">

@@ -118,6 +118,54 @@ select:focus-visible {
   box-shadow: 0 4px 15px rgba(114, 137, 218, 0.2);
 }
 
+/* Secondary button */
+.btn-secondary {
+  background: var(--secondary);
+  color: var(--foreground);
+  border: 2px solid var(--border);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--hover);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+  transform: translateY(-1px);
+}
+
+/* Danger button */
+.btn-danger {
+  background: linear-gradient(135deg, var(--error) 0%, #e63946 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(240, 71, 71, 0.2);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(240, 71, 71, 0.3);
+}
+
+.btn-danger:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(240, 71, 71, 0.2);
+}
+
 /* Card styles */
 .card {
   background: var(--secondary);
@@ -186,7 +234,9 @@ select:focus-visible {
     padding: 16px;
   }
   
-  .btn-discord {
+  .btn-discord,
+  .btn-secondary,
+  .btn-danger {
     padding: 12px 16px;
     font-size: 16px; /* Prevent zoom on iOS */
   }
