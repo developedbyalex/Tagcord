@@ -104,9 +104,7 @@ Row Level Security (RLS) policies ensure users can only modify their own submiss
 ### Categories
 
 Tags can be categorized with up to 3 categories from the following options:
-- Gaming, Coding, Design, Small Community, Music, Art, Education, Technology
-- Social, Business, Entertainment, Sports, Health, Travel, Food, Fashion
-- Science, Politics, Religion, Other
+- Art, Big Community, Business, Coding, Design, Education, Entertainment, Fashion, Fiction, Food, Fun, Fun or Comedy, Gaming, Health, Large Community, Memes, Music, NSFW, Other, Politics, Racing, Religion, Roleplay, Science, Small Community, Social, Sports, Technology, Travel
 
 ## Contributing
 

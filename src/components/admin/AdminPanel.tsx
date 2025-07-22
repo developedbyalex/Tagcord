@@ -396,7 +396,7 @@ export default function AdminPanel() {
                           Categories * (up to 3)
                         </label>
                         <div className="flex flex-wrap gap-2">
-                          {['Gaming', 'Coding', 'Design', 'Small Community', 'Music', 'Art', 'Education', 'Technology', 'Social', 'Business', 'Entertainment', 'Sports', 'Health', 'Travel', 'Food', 'Fashion', 'Science', 'Politics', 'Religion', 'Other'].map((category) => {
+                          {['Art', 'Big Community', 'Business', 'Coding', 'Design', 'Education', 'Entertainment', 'Fashion', 'Fiction', 'Food', 'Fun', 'Fun or Comedy', 'Gaming', 'Health', 'Large Community', 'Memes', 'Music', 'NSFW', 'Other', 'Politics', 'Racing', 'Religion', 'Roleplay', 'Science', 'Small Community', 'Social', 'Sports', 'Technology', 'Travel'].map((category) => {
                             const isSelected = editForm.categories.includes(category)
                             return (
                               <button
