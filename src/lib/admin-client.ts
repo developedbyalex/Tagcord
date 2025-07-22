@@ -50,4 +50,65 @@ export async function adminGetAllUsersClient() {
     .order('created_at', { ascending: false })
 
   return { data, error }
+}
+
+export async function adminUpdateTagClient(tagId: string, updates: {
+  discord_tag?: string
+  discord_icon_id?: number
+  discord_url?: string
+  categories?: string[]
+  image_url?: string
+}) {
+  try {
+    const response = await fetch('/api/admin/update-tag', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tagId, updates }),
+    })
+
+    const result = await response.json()
+
+    if (!response.ok) {
+      return { error: result.error || 'Failed to update tag' }
+    }
+
+    return { data: result.data, error: null }
+  } catch (error) {
+    console.error('Error updating tag:', error)
+    return { error: 'An unexpected error occurred' }
+  }
+} 
+
+export async function adminCreateTagClient(tagData: {
+  discord_tag: string
+  discord_icon_id: number
+  discord_url: string
+  categories: string[]
+  user_id: string
+  user_username: string
+  user_avatar?: string | null
+  description?: string | null
+}) {
+  try {
+    const response = await fetch('/api/admin/create-tag', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tagData),
+    })
+
+    const result = await response.json()
+
+    if (!response.ok) {
+      return { error: result.error || 'Failed to create tag' }
+    }
+
+    return { data: result.data, error: null }
+  } catch (error) {
+    console.error('Error creating tag:', error)
+    return { error: 'An unexpected error occurred' }
+  }
 } 

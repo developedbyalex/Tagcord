@@ -16,6 +16,8 @@ export default function AllTagsPage() {
   const [totalCount, setTotalCount] = useState(0)
   const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest')
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
+  const [isLive, setIsLive] = useState(false)
+  const [showLiveTooltip, setShowLiveTooltip] = useState(false)
   const supabase = createClient()
 
   const fetchTags = useCallback(async () => {
@@ -59,6 +61,32 @@ export default function AllTagsPage() {
     fetchTags()
   }, [fetchTags])
 
+  // Set up real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('tags-changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'tags' 
+        }, 
+        (payload) => {
+          console.log('Real-time update:', payload)
+          // Refresh data when tags change
+          fetchTags()
+          setIsLive(true)
+          // Reset live indicator after animation
+          setTimeout(() => setIsLive(false), 2000)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [fetchTags, supabase])
+
   const totalPages = Math.ceil(totalCount / TAGS_PER_PAGE)
 
   const handleSearch = (e: React.FormEvent) => {
@@ -78,9 +106,35 @@ export default function AllTagsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
-              All Discord Tags
-            </h1>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl font-bold text-[var(--foreground)]">
+                All Discord Tags
+              </h1>
+              <div 
+                className="relative"
+                onMouseEnter={() => setShowLiveTooltip(true)}
+                onMouseLeave={() => setShowLiveTooltip(false)}
+              >
+                <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+                  isLive 
+                    ? 'bg-red-500 text-white shadow-lg scale-110' 
+                    : 'bg-red-500/20 text-red-400'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full bg-current ${
+                    isLive ? 'animate-ping' : 'animate-pulse'
+                  }`}></div>
+                  LIVE
+                </div>
+                
+                {/* Tooltip */}
+                {showLiveTooltip && (
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap z-10 shadow-lg">
+                    Tags will be shown automatically
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-black"></div>
+                  </div>
+                )}
+              </div>
+            </div>
             <p className="text-[var(--text-secondary)]">
               Discover amazing Discord communities shared by our users
             </p>
@@ -165,12 +219,20 @@ export default function AllTagsPage() {
           </div>
 
           {/* Results Count */}
-          <div className="mb-6 text-sm text-[var(--text-secondary)]">
-            {loading ? (
-              'Loading...'
-            ) : (
-              `Showing ${tags.length} of ${totalCount} tag${totalCount !== 1 ? 's' : ''}`
-            )}
+          <div className="mb-6 flex items-center justify-between">
+            <div className="text-sm text-[var(--text-secondary)]">
+              {loading ? (
+                'Loading...'
+              ) : (
+                `Showing ${tags.length} of ${totalCount} tag${totalCount !== 1 ? 's' : ''}`
+              )}
+            </div>
+            <button
+              onClick={() => fetchTags()}
+              className="px-3 py-1 text-sm bg-[var(--secondary)] hover:bg-[var(--hover)] text-[var(--foreground)] rounded-lg transition-colors"
+            >
+              Refresh
+            </button>
           </div>
 
           {/* Tags Grid */}

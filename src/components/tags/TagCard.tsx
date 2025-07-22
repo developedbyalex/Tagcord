@@ -17,6 +17,7 @@ export default function TagCard({ tag }: TagCardProps) {
   return (
     <div 
       className="block bg-[#232428] hover:bg-[#2a2c32] rounded-lg p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg cursor-pointer"
+      style={{ backgroundColor: '#232428', minHeight: '80px' }}
       onClick={handleClick}
       role="button"
       tabIndex={0}
@@ -36,6 +37,11 @@ export default function TagCard({ tag }: TagCardProps) {
             }
             alt={`${tag.discord_tag} icon`}
             className="w-10 h-10 rounded-full"
+            onError={(e) => {
+              console.log('Image failed to load for tag:', tag.discord_tag)
+              const target = e.target as HTMLImageElement
+              target.src = 'https://placeholder.pics/svg/64x64/5865F2-FFFFFF/T'
+            }}
           />
         </div>
         <div className="flex-grow min-w-0">
@@ -49,7 +55,7 @@ export default function TagCard({ tag }: TagCardProps) {
           )}
           {tag.categories && tag.categories.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
-              {tag.categories.slice(0, 3).map((category) => (
+              {tag.categories.map((category) => (
                 <span
                   key={category}
                   className="inline-block px-2 py-1 bg-[var(--accent)]/20 text-[var(--accent)] rounded-md text-xs font-medium"
