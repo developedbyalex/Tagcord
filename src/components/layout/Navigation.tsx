@@ -1,21 +1,110 @@
-import { createClient } from '@/lib/supabase-server'
+'use client'
+
+import { createClient } from '@/lib/supabase'
 import SignInButton from '@/components/auth/SignInButton'
 import UserMenu from '@/components/auth/UserMenu'
 import Link from 'next/link'
+import { useState, useEffect, useCallback } from 'react'
+import { User } from '@supabase/supabase-js'
+import { Profile } from '@/types/database'
 
-export default async function Navigation() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  let profile = null
-  if (user) {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
-    profile = data
-  }
+export default function Navigation() {
+  const [user, setUser] = useState<User | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+
+  const fetchProfile = useCallback(async (userId: string) => {
+    try {
+      // Reduce timeout to 2 seconds and handle gracefully
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 2000)
+      )
+      
+      const fetchPromise = supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+      
+      const { data: profileData, error: profileError } = await Promise.race([
+        fetchPromise,
+        timeoutPromise
+      ])
+      
+      if (profileError) {
+        // Profile doesn't exist or other error - that's okay, user can still use the app
+        return null
+      }
+      return profileData
+    } catch {
+      // Profile fetch failed - that's okay, user can still use the app without profile
+      return null
+    }
+  }, [supabase])
+
+  const checkAuthState = useCallback(async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error) {
+        setUser(null)
+        setProfile(null)
+        return
+      }
+
+      const currentUser = session?.user ?? null
+      setUser(currentUser)
+      
+      if (currentUser) {
+        const profileData = await fetchProfile(currentUser.id)
+        setProfile(profileData)
+      } else {
+        setProfile(null)
+      }
+    } catch {
+      setUser(null)
+      setProfile(null)
+    } finally {
+      setLoading(false)
+    }
+  }, [supabase, fetchProfile])
+
+  useEffect(() => {
+    // Initial auth check
+    checkAuthState()
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const currentUser = session?.user ?? null
+      setUser(currentUser)
+      
+      if (currentUser) {
+        try {
+          const profileData = await fetchProfile(currentUser.id)
+          setProfile(profileData)
+        } catch {
+          setProfile(null)
+        }
+      } else {
+        setProfile(null)
+      }
+      
+      setLoading(false)
+    })
+
+    // Add window focus listener to refresh auth state when returning from OAuth
+    const handleWindowFocus = () => {
+      checkAuthState()
+    }
+
+    window.addEventListener('focus', handleWindowFocus)
+
+    return () => {
+      subscription.unsubscribe()
+      window.removeEventListener('focus', handleWindowFocus)
+    }
+  }, [supabase, checkAuthState, fetchProfile])
 
   return (
     <nav className="bg-[var(--secondary)]/80 backdrop-blur-md border-b border-[var(--border)]/50 sticky top-0 z-50">
@@ -45,7 +134,9 @@ export default async function Navigation() {
 
           {/* Auth Section */}
           <div className="flex items-center">
-            {user ? (
+            {loading ? (
+              <div className="w-8 h-8 rounded-full bg-[var(--secondary)] animate-pulse"></div>
+            ) : user ? (
               <UserMenu user={user} profile={profile} />
             ) : (
               <SignInButton variant="compact" />

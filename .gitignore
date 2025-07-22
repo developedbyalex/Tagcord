@@ -42,3 +42,5 @@ next-env.d.ts
 
 # database migrations and setup files
 *.sql
+
+.vercel

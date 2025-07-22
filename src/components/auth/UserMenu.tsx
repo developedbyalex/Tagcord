@@ -5,6 +5,7 @@ import { User } from '@supabase/supabase-js'
 import { useState, useRef, useEffect } from 'react'
 import { Profile } from '@/types/database'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface UserMenuProps {
   user: User
@@ -15,6 +16,7 @@ export default function UserMenu({ user, profile }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
+  const router = useRouter()
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -31,7 +33,7 @@ export default function UserMenu({ user, profile }: UserMenuProps) {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
-    window.location.reload()
+    router.push('/')
   }
 
   // Discord avatar URL construction

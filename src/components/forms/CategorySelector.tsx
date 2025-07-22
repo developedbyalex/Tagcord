@@ -7,6 +7,7 @@ export const AVAILABLE_CATEGORIES = [
   'Coding',
   'Design',
   'Small Community',
+  'Big Community',
   'Music',
   'Art',
   'Education',
@@ -21,7 +22,12 @@ export const AVAILABLE_CATEGORIES = [
   'Fashion',
   'Science',
   'Politics',
-  'Religion',
+  'Racing',
+  'Memes',
+  'Fun or Comedy',
+  'Fiction',
+  'NSFW',
+  'Roleplay',
   'Other'
 ] as const
 
@@ -98,17 +104,23 @@ export default function CategorySelector({
       <div className="relative">
         <button
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          disabled={disabled || selectedCategories.length >= maxCategories}
+          onClick={() => {
+            if (disabled) return
+            // Allow closing if already open, or opening if under limit
+            if (isOpen || selectedCategories.length < maxCategories) {
+              setIsOpen(!isOpen)
+            }
+          }}
+          disabled={disabled}
           className={`w-full px-4 py-3 text-left bg-[var(--secondary)] border border-[var(--border)] rounded-lg hover:bg-[var(--secondary)]/80 transition-colors ${
-            disabled || selectedCategories.length >= maxCategories 
+            disabled 
               ? 'opacity-50 cursor-not-allowed' 
               : 'cursor-pointer'
           }`}
         >
           <span className="text-[var(--text-secondary)]">
             {selectedCategories.length >= maxCategories 
-              ? 'Maximum categories selected' 
+              ? isOpen ? 'Click to close' : 'Maximum categories selected'
               : 'Select categories...'
             }
           </span>
