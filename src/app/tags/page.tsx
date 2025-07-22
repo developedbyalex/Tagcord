@@ -145,10 +145,10 @@ export default function AllTagsPage() {
             {/* Search and Sort Row */}
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Search Bar */}
-              <form onSubmit={handleSearch} className="flex-1">
-                <div className="relative">
+              <form onSubmit={handleSearch} className="flex-1 min-w-0">
+                <div className="relative group">
                   <svg
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)]"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)] transition-colors duration-200 group-focus-within:text-[var(--accent)]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -160,8 +160,22 @@ export default function AllTagsPage() {
                     placeholder="Search tags, descriptions, or users..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="input pl-10 pr-4"
+                    className="w-full bg-[var(--secondary)] border-2 border-[var(--border)] rounded-xl pl-12 pr-4 py-4 text-[var(--foreground)] placeholder-[var(--text-secondary)] transition-all duration-200 focus:border-[var(--accent)] focus:bg-[var(--background)] focus:outline-none focus:ring-4 focus:ring-[var(--accent)]/10 hover:border-[var(--hover)] hover:bg-[var(--hover)]/50"
                   />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery('')
+                        setCurrentPage(1)
+                      }}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-[var(--text-secondary)] hover:text-[var(--foreground)] transition-colors duration-200"
+                    >
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </form>
 
@@ -169,7 +183,7 @@ export default function AllTagsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest')}
-                className="input w-auto min-w-[120px]"
+                className="bg-[var(--secondary)] border-2 border-[var(--border)] rounded-xl px-4 py-4 text-[var(--foreground)] transition-all duration-200 focus:border-[var(--accent)] focus:bg-[var(--background)] focus:outline-none focus:ring-4 focus:ring-[var(--accent)]/10 hover:border-[var(--hover)] hover:bg-[var(--hover)]/50 w-auto min-w-[140px] flex-shrink-0"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>

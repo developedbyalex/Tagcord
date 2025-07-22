@@ -161,7 +161,7 @@ export default function MyTagsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--background)] py-8">
+      <div className="min-h-screen bg-[var(--background)] py-4 sm:py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
             <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin mx-auto"></div>
@@ -173,10 +173,10 @@ export default function MyTagsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] py-8">
+    <div className="min-h-screen bg-[var(--background)] py-4 sm:py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Link
             href="/"
             className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--foreground)] transition-colors mb-4"
@@ -184,23 +184,24 @@ export default function MyTagsPage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to home
+            <span className="hidden sm:inline">Back to home</span>
+            <span className="sm:hidden">Back</span>
           </Link>
           
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--foreground)] mb-2">
             My Tags
           </h1>
-          <p className="text-[var(--text-secondary)]">
+          <p className="text-sm sm:text-base text-[var(--text-secondary)]">
             Manage your Discord community tags
           </p>
         </div>
 
         {/* Tags List */}
         {tags.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-24 h-24 mx-auto mb-4 bg-[var(--secondary)] rounded-full flex items-center justify-center">
+          <div className="text-center py-8 sm:py-12">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 bg-[var(--secondary)] rounded-full flex items-center justify-center">
               <svg
-                className="w-12 h-12 text-[var(--text-secondary)]"
+                className="w-10 h-10 sm:w-12 sm:h-12 text-[var(--text-secondary)]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -213,48 +214,49 @@ export default function MyTagsPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+            <h3 className="text-lg sm:text-xl font-semibold text-[var(--foreground)] mb-2">
               No tags yet
             </h3>
-            <p className="text-[var(--text-secondary)] mb-4">
+            <p className="text-sm sm:text-base text-[var(--text-secondary)] mb-4 px-4">
               You haven&apos;t submitted any Discord tags yet.
             </p>
             <Link
               href="/submit"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] text-white rounded-lg hover:bg-[#677bc4] transition-colors"
+              className="inline-flex items-center gap-2 px-4 sm:px-6 py-3 bg-[var(--accent)] text-white rounded-lg hover:bg-[#677bc4] transition-colors text-sm sm:text-base"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Submit Your First Tag
+              <span className="hidden sm:inline">Submit Your First Tag</span>
+              <span className="sm:hidden">Submit Tag</span>
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {tags.map((tag) => (
-              <div key={tag.id} className="bg-[var(--secondary)] border border-[var(--border)] rounded-lg p-6">
+              <div key={tag.id} className="bg-[var(--secondary)] border border-[var(--border)] rounded-lg p-4 sm:p-6">
                 {editingTag?.id === tag.id ? (
                   // Edit Form
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <h3 className="text-lg font-semibold text-[var(--foreground)]">Edit Tag</h3>
                       <div className="flex gap-2">
                         <button
                           onClick={saveTag}
-                          className="px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[#677bc4] transition-colors"
+                          className="flex-1 sm:flex-none px-4 py-3 sm:py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[#677bc4] transition-colors text-sm sm:text-base"
                         >
                           Save
                         </button>
                         <button
                           onClick={cancelEditing}
-                          className="px-4 py-2 bg-[var(--secondary)] border border-[var(--border)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover)] transition-colors"
+                          className="flex-1 sm:flex-none px-4 py-3 sm:py-2 bg-[var(--secondary)] border border-[var(--border)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover)] transition-colors text-sm sm:text-base"
                         >
                           Cancel
                         </button>
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                           Tag Name *
@@ -300,7 +302,7 @@ export default function MyTagsPage() {
                                   setEditForm(prev => ({ ...prev, categories: [...prev.categories, category] }))
                                 }
                               }}
-                              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                              className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
                                 isSelected
                                   ? 'bg-[var(--accent)] text-white'
                                   : 'bg-[var(--background)] text-[var(--text-secondary)] hover:bg-[var(--hover)] hover:text-[var(--foreground)]'
@@ -315,18 +317,18 @@ export default function MyTagsPage() {
                   </div>
                 ) : (
                   // Display Mode
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-start gap-3 sm:gap-4">
                       <img
                         src={`https://discordresources.com/img/guilds/${tag.discord_icon_id}.svg`}
                         alt={`${tag.discord_tag} icon`}
-                        className="w-12 h-12 rounded-full"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex-shrink-0"
                       />
-                      <div>
-                        <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base sm:text-lg font-semibold text-[var(--foreground)] mb-1">
                           {tag.discord_tag}
                         </h3>
-                        <p className="text-sm text-[var(--text-secondary)]">
+                        <p className="text-xs sm:text-sm text-[var(--text-secondary)] break-all">
                           {tag.discord_url}
                         </p>
                         {tag.categories && tag.categories.length > 0 ? (
@@ -348,16 +350,16 @@ export default function MyTagsPage() {
                       </div>
                     </div>
                     
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 sm:flex-shrink-0">
                       <button
                         onClick={() => startEditing(tag)}
-                        className="px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[#677bc4] transition-colors"
+                        className="flex-1 sm:flex-none px-4 py-3 sm:py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[#677bc4] transition-colors text-sm sm:text-base"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => deleteTag(tag.id)}
-                        className="px-4 py-2 bg-[var(--error)]/20 text-[var(--error)] rounded-lg hover:bg-[var(--error)]/30 transition-colors"
+                        className="flex-1 sm:flex-none px-4 py-3 sm:py-2 bg-[var(--error)]/20 text-[var(--error)] rounded-lg hover:bg-[var(--error)]/30 transition-colors text-sm sm:text-base"
                       >
                         Delete
                       </button>
