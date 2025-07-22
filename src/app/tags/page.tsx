@@ -376,7 +376,7 @@ export default function AllTagsPage() {
                   />
                   <span>by</span>
                   <a 
-                    href="https://byalex.gg/" 
+                    href="https://tagcord.gg/" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-[var(--accent)] hover:text-[#677bc4] font-medium transition-colors"
