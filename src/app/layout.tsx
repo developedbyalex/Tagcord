@@ -8,6 +8,9 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 export const metadata: Metadata = {
   title: "Tagcord.gg - Discord Tag Explorer",
   description: "Discover and share amazing Discord communities with our modern tag explorer.",
+  icons: {
+    icon: '/globe.svg', // Using your existing globe.svg as favicon
+  },
 };
 
 export default function RootLayout({
@@ -42,8 +45,12 @@ export default function RootLayout({
             },
           }}
         />
-        <Analytics />
-        <SpeedInsights />
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   );

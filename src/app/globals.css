@@ -234,9 +234,10 @@ select:focus-visible {
     padding: 16px;
   }
   
-  .btn-discord,
-  .btn-secondary,
-  .btn-danger {
+  /* Only apply to buttons that don't have responsive classes */
+  .btn-discord:not([class*="px-"]),
+  .btn-secondary:not([class*="px-"]),
+  .btn-danger:not([class*="px-"]) {
     padding: 12px 16px;
     font-size: 16px; /* Prevent zoom on iOS */
   }

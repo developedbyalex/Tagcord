@@ -48,7 +48,7 @@ export default async function Navigation() {
             {user ? (
               <UserMenu user={user} profile={profile} />
             ) : (
-              <SignInButton />
+              <SignInButton variant="compact" />
             )}
           </div>
         </div>
